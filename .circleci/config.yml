@@ -1,0 +1,65 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/golang:1.13.4
+    working_directory: ~/go/src/test
+    steps:
+      - checkout
+      - run:
+          name: Go get library
+          #command: go get -u -t -v -d ./...
+          command: go get github.com/gin-gonic/gin && go get github.com/jinzhu/gorm && go get github.com/go-sql-driver/mysql && go get golang.org/x/tools/cmd/goimports && go get github.com/joho/godotenv && go get golang.org/x/crypto/bcrypt && go get github.com/google/uuid && go get github.com/aws/aws-sdk-go/aws && go get github.com/aws/aws-sdk-go/aws/session && go get github.com/aws/aws-sdk-go/service/ses && go get github.com/bamzi/jobrunner && go get github.com/k-washi/jwt-decode/jwtdecode && go get firebase.google.com/go && go get github.com/gin-contrib/cors && go get github.com/kemper0530/go-handson/common && go get github.com/kemper0530/go-handson/config && go get github.com/kemper0530/go-handson/controllers/controller && go get github.com/stretchr/testify/assert && go get google.golang.org/api/option
+      - run:
+          name: Env Setup
+          command: echo 'export PATH=/go/bin/:${PATH}' >> $BASH_ENV
+      - run:
+          name: Run Test
+          command: GO_ENV=production go test -cover -v
+  # EC2にSSH接続し、ビルドを実行
+  build:
+    machine:
+      image: circleci/classic:edge
+    steps:
+      # CircleCIに登録した秘密鍵を呼び出す。
+      - add_ssh_keys:
+          fingerprints:
+            - "68:76:75:bf:2f:99:83:88:c3:9b:54:6d:b1:d1:5e:49"
+      - run:
+          name: DockerImage Build
+          command: ssh ${USER_NAME}@${HOST_NAME} 'ssh -i "portfolio_key.pem" ec2-user@${PRIVATE_SUBNET} && cd /work/docker-portfolio/go-docker/app/go-handson && git pull origin master && cd /work/docker-portfolio/ && docker stop go_portfolio && docker rm go_portfolio && docker rmi -f docker-portfolio_goapp golang && docker-compose build goapp'
+  # EC2にSSH接続し、コンテナを実行
+  deploy:
+    machine:
+      image: circleci/classic:edge
+    steps:
+      # CircleCIに登録した秘密鍵を呼び出す。
+      - add_ssh_keys:
+          fingerprints:
+            - "46:4c:fd:fd:5f:a4:25:e4:a1:0e:be:a6:18:d5:98:32"
+      - run:
+          name: Docker Run
+          command: ssh ${USER_NAME}@${HOST_NAME} 'ssh -i "portfolio_key.pem" ec2-user@${PRIVATE_SUBNET} && cd /work/docker-portfolio && docker-compose up -d'
+      - run:
+          name: sleep 60s
+          command: sleep 60
+      - run:
+          name: actuator
+          command: curl -X GET https://kemper0530.com/api/actuaterHealth
+workflows:
+  version: 2
+  test_and_build_and_deploy:
+    jobs:
+      - test
+      # - build:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: master
+      # - deploy:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only: master
