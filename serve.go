@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"time"
+	"fmt"
+	"github.com/joho/godotenv"
 
 	// Gin
 	"github.com/gin-contrib/cors"
@@ -32,6 +34,13 @@ func main() {
 }
 
 func init() {
+	if os.Getenv("GO_ENV") == "development" {
+		// 環境変数ファイルの読込
+		err := godotenv.Load(fmt.Sprintf("config/%s.env", os.Getenv("GO_ENV")))
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	}
 	// firebaseSDKの読込
 	log.Println("Firebaseファイル読み込み")
 	auth, err := config.SetUpFirebase()
@@ -42,11 +51,13 @@ func init() {
 	}
 	// commonに格納する
 	common.Auth = auth
-  log.Println(common.Auth)
 
 	// サーバーを起動する
 	router := serve()
-	ginLambda = ginadapter.New(router)
+
+	if os.Getenv("GO_ENV") == "production" {
+		ginLambda = ginadapter.New(router)
+	}
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
