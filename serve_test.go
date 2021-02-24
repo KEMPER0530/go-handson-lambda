@@ -41,7 +41,7 @@ func TestActuaterHealth(t *testing.T) {
 	router.Use(gin.Logger())
 
 	// router.GET("/api/actuaterHealth", mockHandler)
-	req, _ := http.NewRequest("GET", "/actuaterhealth", nil)
+	req, _ := http.NewRequest("GET", "/V1/actuaterHealth", nil)
 	rec := httptest.NewRecorder()
 	router.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusOK, rec.Code)
@@ -49,26 +49,26 @@ func TestActuaterHealth(t *testing.T) {
 	t.Log("END TestActuaterHealth")
 }
 
-func TestFetchAllMembers(t *testing.T) {
-	t.Log("START TestFetchAllMembers")
+// func TestFetchAllMembers(t *testing.T) {
+// 	t.Log("START TestFetchAllMembers")
 
-	gin.SetMode(gin.TestMode)
-	router := serve()
-	// router := gin.Default()
-	router.Use(gin.Logger())
+// 	gin.SetMode(gin.TestMode)
+// 	router := serve()
+// 	// router := gin.Default()
+// 	router.Use(gin.Logger())
 
-	// router.GET("/api/actuaterHealth", mockHandler)
-	req, _ := http.NewRequest("GET", "/fetchallmembers", nil)
-	rec := httptest.NewRecorder()
-	// JWTのセット
-	str := os.Getenv("TEST_JWT")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
+// 	// router.GET("/api/actuaterHealth", mockHandler)
+// 	req, _ := http.NewRequest("GET", "V1/fetchAllMembers", nil)
+// 	rec := httptest.NewRecorder()
+// 	// JWTのセット
+// 	str := os.Getenv("TEST_JWT")
+// 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
 
-	router.ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusOK, rec.Code)
+// 	router.ServeHTTP(rec, req)
+// 	assert.Equal(t, http.StatusOK, rec.Code)
 
-	t.Log("END TestFetchAllMembers")
-}
+// 	t.Log("END TestFetchAllMembers")
+// }
 
 // func TestFetchAllWorker(t *testing.T) {
 // 	t.Log("START TestFetchAllWorker")
