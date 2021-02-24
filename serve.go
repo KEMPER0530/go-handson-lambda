@@ -52,11 +52,19 @@ func init() {
 	// commonに格納する
 	common.Auth = auth
 
-	// サーバーを起動する
-	router := serve()
-
 	if os.Getenv("GO_ENV") == "production" {
+		// サーバーを起動する
+		router := serve()
 		ginLambda = ginadapter.New(router)
+	}else{
+		// ポートの取得
+		PORT := os.Getenv("PORT")
+
+		// サーバーを起動する
+		router := serve()
+		if err := router.Run(":" + PORT); err != nil {
+			log.Fatal("Server Run Failed.: ", err)
+		}
 	}
 }
 
@@ -82,45 +90,45 @@ func serve() *gin.Engine {
 
 	// ルーターの設定
 	// ログインID、パスワードを返却する
-	router.POST("/fetchlogininfo", controller.FetchLoginInfo)
+	router.POST("/V1/fetchLoginInfo", controller.FetchLoginInfo)
 
 	// work情報のJSONを返す
-	router.GET("/fetchallworker", controller.FetchAllWorker)
+	router.GET("/V1/fetchAllWorker", controller.FetchAllWorker)
 
 	// クレジットカード情報を登録し、結果のJSONを返す
-	router.POST("/fetchcreditinforegist", controller.FetchCreditInfoRegist)
+	router.POST("/V1/fetchCreditInfoRegist", controller.FetchCreditInfoRegist)
 
 	// お問合せフォーム内容を登録し、メールを送信するかつ結果のJSONを返す
-	router.POST("/fetchsendmailregist", controller.FetchSendMailRegist)
+	router.POST("/V1/fetchSendMailRegist", controller.FetchSendMailRegist)
 
 	// Goアプリのステータスを返却する
-	router.GET("/actuaterhealth", controller.ActuaterHealth)
+	router.GET("/V1/actuaterHealth", controller.ActuaterHealth)
 
 	// profile情報のJSONを返す
-	router.GET("/fetchprofileinfo", controller.FetchProfileInfo)
+	router.GET("/V1/fetchProfileInfo", controller.FetchProfileInfo)
 
 	// アカウント情報を仮登録し、結果をJSONを返す
-	router.POST("/fetchregistaccount", controller.FetchRegistAccount)
+	router.POST("/V1/fetchRegistAccount", controller.FetchRegistAccount)
 
 	// 仮登録後にメール送信する結果をJSONを返す
-	router.POST("/fetchregistaccountmail", controller.FetchRegistAccountMail)
+	router.POST("/V1/fetchRegistAccountMail", controller.FetchRegistAccountMail)
 
 	// ログインIDを受取り、氏名とメールアドレスを返却する
-	router.POST("/fetchmailadrinfo", controller.FetchMailAdrInfo)
+	router.POST("/V1/fetchMailAdrInfo", controller.FetchMailAdrInfo)
 
 	// 仮パスワードのリンクを押下された場合の挙動
 	router.Static("/static/css", "./static/css")
 	router.LoadHTMLGlob("templates/*.tmpl")
-	router.GET("/fetchsignupaccountmail", controller.FetchSignUpAccountMail)
+	router.GET("/V1/fetchSignupAccountMail", controller.FetchSignUpAccountMail)
 
 	// NEWSAPIの記事を取得し、フロントへ返却する
-	router.POST("/fetchnewsinfo", controller.FetchNewsInfo)
+	router.POST("/V1/fetchNewsInfo", controller.FetchNewsInfo)
 
 	// アクセスログを登録する
-	router.POST("/fetchregistaccesslog", controller.FetchRegistAccessLog)
+	router.POST("/V1/fetchRegistAccessLog", controller.FetchRegistAccessLog)
 
 	// Lambdaからリクエストされた内容を登録する
-	router.POST("/fetchregistbounce", controller.FetchRegistBounce)
+	router.POST("/V1/fetchRegistBounce", controller.FetchRegistBounce)
 
 	return router
 }
