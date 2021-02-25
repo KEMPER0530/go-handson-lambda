@@ -30,33 +30,26 @@ import (
 var ginLambda *ginadapter.GinLambda
 
 func main() {
-	lambda.Start(Handler)
-}
-
-func init() {
-	if os.Getenv("GO_ENV") == "development" {
+	if os.Getenv("GO_ENV") == "production" {
+		lambda.Start(Handler)
+	}else{
 		// 環境変数ファイルの読込
 		err := godotenv.Load(fmt.Sprintf("config/%s.env", os.Getenv("GO_ENV")))
 		if err != nil {
 			log.Fatal("Error loading .env file")
 		}
-	}
-	// firebaseSDKの読込
-	log.Println("Firebaseファイル読み込み")
-	auth, err := config.SetUpFirebase()
-	log.Println(auth)
-	if err != nil {
-		log.Println(err)
-		log.Println("Error loading firebase-auth file")
-	}
-	// commonに格納する
-	common.Auth = auth
 
-	if os.Getenv("GO_ENV") == "production" {
-		// サーバーを起動する
-		router := serve()
-		ginLambda = ginadapter.New(router)
-	}else{
+		// firebaseSDKの読込
+		log.Println("Firebaseファイル読み込み")
+		auth, err := config.SetUpFirebase()
+		log.Println(auth)
+		if err != nil {
+			log.Println(err)
+			log.Println("Error loading firebase-auth file")
+		}
+		// commonに格納する
+		common.Auth = auth
+
 		// ポートの取得
 		PORT := os.Getenv("PORT")
 
@@ -65,6 +58,26 @@ func init() {
 		if err := router.Run(":" + PORT); err != nil {
 			log.Fatal("Server Run Failed.: ", err)
 		}
+	}
+}
+
+func init() {
+	if os.Getenv("GO_ENV") == "production" {
+
+		// firebaseSDKの読込
+		log.Println("Firebaseファイル読み込み(production)")
+		auth, err := config.SetUpFirebase()
+		log.Println(auth)
+		if err != nil {
+			log.Println(err)
+			log.Println("Error loading firebase-auth file")
+		}
+		// commonに格納する
+		common.Auth = auth
+
+		// サーバーを起動する
+		router := serve()
+		ginLambda = ginadapter.New(router)
 	}
 }
 

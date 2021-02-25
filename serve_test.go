@@ -7,10 +7,11 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	//"net/url"
+	"net/url"
 	"os"
-	//"strings"
+	"strings"
 	"testing"
+	"github.com/joho/godotenv"
 
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
@@ -21,10 +22,16 @@ import (
 	// MySQL用ドライバ
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm"
 )
 
 func TestMain(m *testing.M) {
 	fmt.Println("before test serve_test.go")
+	// 環境変数ファイルの読込
+	err := godotenv.Load(fmt.Sprintf("config/%s.env", os.Getenv("GO_ENV")))
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	// 設定ファイルの読込
 	//SetConfig()
 	code := m.Run()
@@ -70,166 +77,166 @@ func TestActuaterHealth(t *testing.T) {
 // 	t.Log("END TestFetchAllMembers")
 // }
 
-// func TestFetchAllWorker(t *testing.T) {
-// 	t.Log("START TestFetchAllWorker")
+func TestFetchAllWorker(t *testing.T) {
+	t.Log("START TestFetchAllWorker")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	// router := gin.Default()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	// router := gin.Default()
+	router.Use(gin.Logger())
 
-// 	// router.GET("/api/actuaterHealth", mockHandler)
-// 	req, _ := http.NewRequest("GET", "/api/fetchAllWorker", nil)
-// 	rec := httptest.NewRecorder()
+	// router.GET("/api/actuaterHealth", mockHandler)
+	req, _ := http.NewRequest("GET", "/V1/fetchAllWorker", nil)
+	rec := httptest.NewRecorder()
 
-// 	// JWTのセット
-// 	str := os.Getenv("TEST_JWT")
-// 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
+	// JWTのセット
+	str := os.Getenv("TEST_JWT")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
 
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
-// 	t.Log("END TestFetchAllWorker")
-// }
+	t.Log("END TestFetchAllWorker")
+}
 
-// func TestFetchProfileInfo(t *testing.T) {
-// 	t.Log("START TestFetchProfileInfo")
+func TestFetchProfileInfo(t *testing.T) {
+	t.Log("START TestFetchProfileInfo")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	// router := gin.Default()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	// router := gin.Default()
+	router.Use(gin.Logger())
 
-// 	// router.GET("/api/actuaterHealth", mockHandler)
-// 	req, _ := http.NewRequest("GET", "/api/fetchProfileInfo", nil)
-// 	rec := httptest.NewRecorder()
+	// router.GET("/api/actuaterHealth", mockHandler)
+	req, _ := http.NewRequest("GET", "/V1/fetchProfileInfo", nil)
+	rec := httptest.NewRecorder()
 
-// 	// JWTのセット
-// 	str := os.Getenv("TEST_JWT")
-// 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
+	// JWTのセット
+	str := os.Getenv("TEST_JWT")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
 
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
-// 	t.Log("END TestFetchProfileInfo")
-// }
+	t.Log("END TestFetchProfileInfo")
+}
 
-// func TestFetchSignUpAccountMail(t *testing.T) {
-// 	t.Log("START TestFetchSignUpAccountMail")
+func TestFetchSignUpAccountMail(t *testing.T) {
+	t.Log("START TestfetchSignupAccountMail")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	// router := gin.Default()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	// router := gin.Default()
+	router.Use(gin.Logger())
 
-// 	// router.GET("/api/actuaterHealth", mockHandler)
-// 	req, _ := http.NewRequest("GET", "/api/fetchSignUpAccountMail", nil)
-// 	rec := httptest.NewRecorder()
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
+	// router.GET("/api/actuaterHealth", mockHandler)
+	req, _ := http.NewRequest("GET", "/V1/fetchSignupAccountMail", nil)
+	rec := httptest.NewRecorder()
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
-// 	t.Log("END TestFetchSignUpAccountMail")
-// }
+	t.Log("END TestfetchSignupAccountMail")
+}
 
-// func TestFetchMailAdrInfo(t *testing.T) {
-// 	t.Log("START TestFetchMailAdrInfo")
+func TestFetchMailAdrInfo(t *testing.T) {
+	t.Log("START TestFetchMailAdrInfo")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	router.Use(gin.Logger())
 
-// 	// パラメータを組み立て
-// 	values := url.Values{} // url.Valuesオブジェクト生成
-// 	values.Set("id", "1")  // key-valueを追加
+	// パラメータを組み立て
+	values := url.Values{} // url.Valuesオブジェクト生成
+	values.Set("id", "1")  // key-valueを追加
 
-// 	fmt.Println(strings.NewReader(values.Encode()))
-// 	req, _ := http.NewRequest("POST", "/api/fetchMailAdrInfo", strings.NewReader(values.Encode()))
-// 	rec := httptest.NewRecorder()
+	fmt.Println(strings.NewReader(values.Encode()))
+	req, _ := http.NewRequest("POST", "/V1/fetchMailAdrInfo", strings.NewReader(values.Encode()))
+	rec := httptest.NewRecorder()
 
-// 	// JWTのセット
-// 	str := os.Getenv("TEST_JWT")
-// 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
-// 	// Content-Type 設定
-// 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	// JWTのセット
+	str := os.Getenv("TEST_JWT")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
+	// Content-Type 設定
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
-// 	t.Log("END TestFetchMailAdrInfo")
-// }
+	t.Log("END TestFetchMailAdrInfo")
+}
 
-// func TestFetchLoginInfo(t *testing.T) {
-// 	t.Log("START TestFetchLoginInfo")
+func TestFetchLoginInfo(t *testing.T) {
+	t.Log("START TestFetchLoginInfo")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	router.Use(gin.Logger())
 
-// 	// パラメータを組み立て
-// 	values := url.Values{}          // url.Valuesオブジェクト生成
-// 	values.Set("username", "test1") // key-valueを追加
-// 	values.Add("password", "test1") // key-valueを追加
+	// パラメータを組み立て
+	values := url.Values{}          // url.Valuesオブジェクト生成
+	values.Set("username", "test1") // key-valueを追加
+	values.Add("password", "test1") // key-valueを追加
 
-// 	fmt.Println(strings.NewReader(values.Encode()))
-// 	req, _ := http.NewRequest("POST", "/api/fetchLoginInfo", strings.NewReader(values.Encode()))
-// 	rec := httptest.NewRecorder()
+	fmt.Println(strings.NewReader(values.Encode()))
+	req, _ := http.NewRequest("POST", "/V1/fetchLoginInfo", strings.NewReader(values.Encode()))
+	rec := httptest.NewRecorder()
 
-// 	// JWTのセット
-// 	str := os.Getenv("TEST_JWT")
-// 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
-// 	// Content-Type 設定
-// 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	// JWTのセット
+	str := os.Getenv("TEST_JWT")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
+	// Content-Type 設定
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
-// 	t.Log("END TestFetchLoginInfo")
-// }
+	t.Log("END TestFetchLoginInfo")
+}
 
-// func TestFetchNewsInfo(t *testing.T) {
-// 	t.Log("START TestFetchNewsInfo")
+func TestFetchNewsInfo(t *testing.T) {
+	t.Log("START TestFetchNewsInfo")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	router.Use(gin.Logger())
 
-// 	// パラメータを組み立て
-// 	values := url.Values{}             // url.Valuesオブジェクト生成
-// 	values.Set("category", "business") // key-valueを追加
+	// パラメータを組み立て
+	values := url.Values{}             // url.Valuesオブジェクト生成
+	values.Set("category", "business") // key-valueを追加
 
-// 	fmt.Println(strings.NewReader(values.Encode()))
-// 	req, _ := http.NewRequest("POST", "/api/fetchNewsInfo", strings.NewReader(values.Encode()))
-// 	rec := httptest.NewRecorder()
+	fmt.Println(strings.NewReader(values.Encode()))
+	req, _ := http.NewRequest("POST", "/V1/fetchNewsInfo", strings.NewReader(values.Encode()))
+	rec := httptest.NewRecorder()
 
-// 	// JWTのセット
-// 	str := os.Getenv("TEST_JWT")
-// 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
-// 	// Content-Type 設定
-// 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	// JWTのセット
+	str := os.Getenv("TEST_JWT")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", str))
+	// Content-Type 設定
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
-// 	t.Log("END TestFetchNewsInfo")
-// }
+	t.Log("END TestFetchNewsInfo")
+}
 
-// func TestFetchRegistBounce(t *testing.T) {
-// 	t.Log("START TestFetchRegistBounce")
+func TestFetchRegistBounce(t *testing.T) {
+	t.Log("START TestFetchRegistBounce")
 
-// 	gin.SetMode(gin.TestMode)
-// 	router := serve()
-// 	// router := gin.Default()
-// 	router.Use(gin.Logger())
+	gin.SetMode(gin.TestMode)
+	router := serve()
+	// router := gin.Default()
+	router.Use(gin.Logger())
 
-// 	//rec := router.GET("/api/fetchRegistBounce", mockHandler)
-// 	req, _ := http.NewRequest("POST", "/api/fetchRegistBounce", nil)
-// 	rec := httptest.NewRecorder()
-// 	router.ServeHTTP(rec, req)
-// 	assert.Equal(t, http.StatusOK, rec.Code)
-// 	//assert.Equal(t, http.StatusOK, rec)
+	//rec := router.GET("/api/fetchRegistBounce", mockHandler)
+	req, _ := http.NewRequest("POST", "/V1/fetchRegistBounce", nil)
+	rec := httptest.NewRecorder()
+	router.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
+	//assert.Equal(t, http.StatusOK, rec)
 
-// 	t.Log("END TestFetchRegistBounce")
-// }
+	t.Log("END TestFetchRegistBounce")
+}
 
 func mockHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
