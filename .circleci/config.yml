@@ -14,9 +14,6 @@ jobs:
           name: Env Setup
           command: echo 'export PATH=/go/src/github.com/kemper0530/go-handson-lambda' >> $BASH_ENV
       - run:
-          name: go mod
-          command: go mod init github.com/kemper0530/go-handson-lambda
-      - run:
           name: Run Test
           command: GO_ENV=development go test -cover -v
   # EC2にSSH接続し、コンテナを実行
