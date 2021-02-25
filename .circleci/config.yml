@@ -15,7 +15,7 @@ jobs:
           command: echo 'export PATH=/go/bin/:${PATH}' >> $BASH_ENV
       - run:
           name: Run Test
-          command: GO_ENV=production go test -cover -v
+          command: GO_ENV=development go test -cover -v
   # EC2にSSH接続し、コンテナを実行
   deploy:
     machine:
