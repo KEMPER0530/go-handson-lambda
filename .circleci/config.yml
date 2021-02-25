@@ -3,7 +3,7 @@ jobs:
   test:
     docker:
       - image: circleci/golang:1.13.4
-    working_directory: ~/go/src/test
+    working_directory: ~/go/src/github.com/kemper0530/go-handson-lambda
     steps:
       - checkout
       - run:
@@ -12,7 +12,10 @@ jobs:
           command: go get github.com/gin-gonic/gin && go get github.com/jinzhu/gorm && go get github.com/go-sql-driver/mysql && go get golang.org/x/tools/cmd/goimports && go get github.com/joho/godotenv && go get golang.org/x/crypto/bcrypt && go get github.com/google/uuid && go get github.com/aws/aws-sdk-go/aws && go get github.com/aws/aws-sdk-go/aws/session && go get github.com/aws/aws-sdk-go/service/ses && go get github.com/bamzi/jobrunner && go get github.com/k-washi/jwt-decode/jwtdecode && go get firebase.google.com/go && go get github.com/gin-contrib/cors && go get github.com/kemper0530/go-handson/common && go get github.com/kemper0530/go-handson/config && go get github.com/kemper0530/go-handson/controllers/controller && go get github.com/stretchr/testify/assert && go get google.golang.org/api/option && go get github.com/aws/aws-lambda-go/events && go get github.com/aws/aws-lambda-go/lambda && go get github.com/awslabs/aws-lambda-go-api-proxy/gin
       - run:
           name: Env Setup
-          command: echo 'export PATH=/go/bin/:${PATH}' >> $BASH_ENV
+          command: echo 'export PATH=/go/src/github.com/kemper0530/go-handson-lambda' >> $BASH_ENV
+      - run:
+          name: go mod
+          command: go mod init github.com/kemper0530/go-handson-lambda
       - run:
           name: Run Test
           command: GO_ENV=development go test -cover -v
