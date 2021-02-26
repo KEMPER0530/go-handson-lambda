@@ -15,7 +15,7 @@ import (
 
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
-	common "github.com/kemper0530/go-handson/common"
+	common "github.com/kemper0530/go-handson-lambda/common"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/option"
 
