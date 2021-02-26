@@ -1,4 +1,6 @@
 version: 2
+orbs:
+  aws-ecr: circleci/aws-ecr@0.0.10
 jobs:
   test:
     docker:
@@ -17,27 +19,26 @@ jobs:
           name: Run Test
           command: GO_ENV=development go test -cover -v
   # EC2にSSH接続し、コンテナを実行
-  deploy:
-    machine:
-      image: circleci/classic:edge
-    steps:
-      # CircleCIに登録した秘密鍵を呼び出す。
-      - add_ssh_keys:
-          fingerprints:
-            - "46:4c:fd:fd:5f:a4:25:e4:a1:0e:be:a6:18:d5:98:32"
-      - run:
-          name: AWS Login
-          command: aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 870574718611.dkr.ecr.ap-northeast-1.amazonaws.com
-      - run:
-          name: build
-          command: docker build -t go-handson-lambda .
-      - run:
-          name: tag
-          command: docker tag go-handson-lambda:latest 870574718611.dkr.ecr.ap-northeast-1.amazonaws.com/go-handson-lambda:latest
-      - run:
-          name: docker push
-          command: docker push 870574718611.dkr.ecr.ap-northeast-1.amazonaws.com/go-handson-lambda:latest
-      # - run:
+    # machine:
+    #   image: circleci/classic:edge
+    # steps:
+    #   # CircleCIに登録した秘密鍵を呼び出す。
+    #   - add_ssh_keys:
+    #       fingerprints:
+    #         - "46:4c:fd:fd:5f:a4:25:e4:a1:0e:be:a6:18:d5:98:32"
+    #   - run:
+    #       name: AWS Login
+    #       command: aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 870574718611.dkr.ecr.ap-northeast-1.amazonaws.com
+    #   - run:
+    #       name: build
+    #       command: docker build -t go-handson-lambda .
+    #   - run:
+    #       name: tag
+    #       command: docker tag go-handson-lambda:latest 870574718611.dkr.ecr.ap-northeast-1.amazonaws.com/go-handson-lambda:latest
+    #   - run:
+    #       name: docker push
+    #       command: docker push 870574718611.dkr.ecr.ap-northeast-1.amazonaws.com/go-handson-lambda:latest
+    #   # - run:
       #     name: sleep 60s
       #     command: sleep 60
       # - run:
@@ -48,7 +49,11 @@ workflows:
   test_and_build_and_deploy:
     jobs:
       - test
-      - deploy:
+      - aws-ecr/build-and-push-image:
+          account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          region: ${AWS_REGION}
+          tag: "${CIRCLE_SHA1}"
           requires:
             - test
           filters:
