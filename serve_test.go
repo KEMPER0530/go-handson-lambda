@@ -27,10 +27,13 @@ import (
 
 func TestMain(m *testing.M) {
 	fmt.Println("before test serve_test.go")
-	// 環境変数ファイルの読込
-	err := godotenv.Load(fmt.Sprintf("config/%s.env", os.Getenv("GO_ENV")))
-	if err != nil {
-		log.Fatal("Error loading .env file")
+
+	if os.Getenv("MODE") == "LOCAL" {
+		// 環境変数ファイルの読込
+		err := godotenv.Load(fmt.Sprintf("config/%s.env", os.Getenv("GO_ENV")))
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 	// 設定ファイルの読込
 	//SetConfig()
