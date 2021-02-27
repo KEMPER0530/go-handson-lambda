@@ -54,6 +54,10 @@ workflows:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: '${AWS_RESOURCE_NAME_PREFIX}'
           tag: "${CIRCLE_SHA1}"
+          setup-remote-docker: true
+          remote-docker-version: 19.03.13
+          remote-docker-layer-caching: true
+          create-repo: true
           requires:
             - test
           filters:
