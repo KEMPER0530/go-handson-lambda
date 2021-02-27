@@ -49,7 +49,7 @@ ENV PATH=$PATH:$GOPATH/src/github.com/kemper0530/go-handson-lambda
 WORKDIR $GOPATH/src/github.com/kemper0530/go-handson-lambda
 
 COPY  /config $GOPATH/src/github.com/kemper0530/go-handson-lambda/config
-COPY  /keys $GOPATH/src/github.com/kemper0530/go-handson-lambda/keys
+# COPY  /keys $GOPATH/src/github.com/kemper0530/go-handson-lambda/keys
 COPY  /common $GOPATH/src/github.com/kemper0530/go-handson-lambda/common
 COPY  /controllers $GOPATH/src/github.com/kemper0530/go-handson-lambda/controllers
 COPY  /models $GOPATH/src/github.com/kemper0530/go-handson-lambda/models
