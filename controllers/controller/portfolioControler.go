@@ -185,9 +185,9 @@ func FetchRegistAccount(c *gin.Context) {
 func FetchRegistAccountMail(c *gin.Context) {
 	resultStatus, errMsg := authcnfg.AuthFirebase(c, cnst.Auth)
 	fmt.Println("【FetchRegistAccountMail】:" + strconv.Itoa(resultStatus) + " 【errMsg】" + errMsg )
-	//if resultStatus == cnst.JsonStatusNG {
-	//	c.JSON(http.StatusBadRequest, errMsg)
-	//} else {
+	if resultStatus == cnst.JsonStatusNG {
+		c.JSON(http.StatusBadRequest, errMsg)
+	} else {
 		to_email := c.PostForm("to_email")
 		name := c.PostForm("name")
 		text := c.PostForm("text")
@@ -208,7 +208,7 @@ func FetchRegistAccountMail(c *gin.Context) {
 
 		// URLへのアクセスに対してJSONを返す
 		c.JSON(http.StatusOK, resultProduct)
-	//}
+	}
 }
 
 // FetchMailAdrInfo は 指定したIDのメールアドレスと氏名を取得する
